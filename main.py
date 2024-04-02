@@ -1,17 +1,20 @@
 from tkinter import *
 from PIL import ImageTk,Image
-import PyMySql
+# import pymysql
+import mysql.connector
 from tkinter import messagebox
 from AddBook import *
 from DeleteBook import *
 from ViewBooks import *
 from IssueBook import *
 from ReturnBook import *
-# Add your own database name and password here to reflect in the code
-mypass = "root"
-mydatabase="db"
 
-con = pymysql.connect(host="localhost",user="root",password=mypass,database=mydatabase)
+# Add your own database name and password here to reflect in the code
+
+mypass= "root"
+mydatabase="bookdb"
+
+con = mysql.connector.connect(host="localhost",user="root",password=mypass,database=mydatabase)
 cur = con.cursor()
 
 root = Tk()

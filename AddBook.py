@@ -1,8 +1,8 @@
 from tkinter import *
 from PIL import ImageTk,Image
 from tkinter import messagebox
-import pymysql
-
+# import pymysql
+import mysql.connector
 def bookRegister():
     
     bid = bookInfo1.get()
@@ -37,10 +37,10 @@ def addBook():
     root.geometry("600x500")
 
     # Add your own database name and password here to reflect in the code
-    mypass = "root"
-    mydatabase="db"
+    mypass= "root"
+    mydatabase="bookdb"
 
-    con = pymysql.connect(host="localhost",user="root",password=mypass,database=mydatabase)
+    con = mysql.connector.connect(host="localhost",user="root",password=mypass,database=mydatabase)
     cur = con.cursor()
 
     # Enter Table Names here
