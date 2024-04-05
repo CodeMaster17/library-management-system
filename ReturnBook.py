@@ -2,14 +2,15 @@ from tkinter import *
 from PIL import ImageTk,Image
 from tkinter import messagebox
 # import pymysql
+import config
 import mysql.connector
-
+import datetime
 # Add your own database name and password here to reflect in the code
-mypass= "root"
-mydatabase="bookdb"
+mypass= config.dbPass
+mydatabase=config.db
 
 con = mysql.connector.connect(host="localhost",user="root",password=mypass,database=mydatabase)
-cur = con.cursor()
+cur = con.cursor(buffered=True)
 
 # Enter Table Names here
 issueTable = "books_issued" #Issue Table
@@ -72,6 +73,65 @@ def returnn():
     
     allBid.clear()
     root.destroy()
+
+
+def renew():
+    
+    global SubmitBtn,labelFrame,lb1,bookInfo1,quitBtn,root,Canvas1,status
+    
+    bid = bookInfo1.get()
+    expiry = ""
+    extractBid = "select bid,expiry from "+issueTable
+    try:
+        cur.execute(extractBid)
+        con.commit()
+        for i in cur:
+            allBid.append(i[0])
+        
+        if bid in allBid:
+            checkAvail = "select status from "+bookTable+" where bid = '"+bid+"'"
+            cur.execute(checkAvail)
+            con.commit()
+            for i in cur:
+                check = i[0]
+            
+            fetchExpiry = "select expiry from "+issueTable+" where bid = '"+bid+"'"
+            cur.execute(fetchExpiry)
+            con.commit()
+            for i in cur:
+                expiry = i[0]
+                print(i[0])
+            
+            if check == 'issued':
+                status = True
+            else:
+                status = False
+
+        else:
+            messagebox.showinfo("Error","Book ID not present")
+    except:
+        messagebox.showinfo("Error","Can't fetch Book IDs")
+    
+    oldExpiry = datetime.datetime.strptime(expiry,"%d/%m/%y")
+    newExpiry =(oldExpiry + datetime.timedelta(days=10))
+    newExpiryStr = newExpiry.strftime('%d/%m/%y')
+    issueSql = f"update {issueTable} set expiry = '{newExpiryStr}' where bid = {bid}"
+    try:
+        if bid in allBid and status == True:
+            cur.execute(issueSql)
+            con.commit()
+            messagebox.showinfo('Success',"Book Renewed Successfully")
+        else:
+            allBid.clear()
+            messagebox.showinfo('Message',"Please check the book ID")
+            root.destroy()
+            return
+    except:
+        messagebox.showinfo("Search Error","The value entered is wrong, Try again")
+    
+    
+    allBid.clear()
+    root.destroy()
     
 def returnBook(): 
     
@@ -106,9 +166,12 @@ def returnBook():
     
     #Submit Button
     SubmitBtn = Button(root,text="Return",bg='#d1ccc0', fg='black',command=returnn)
-    SubmitBtn.place(relx=0.28,rely=0.9, relwidth=0.18,relheight=0.08)
+    SubmitBtn.place(relx=0.18,rely=0.9, relwidth=0.18,relheight=0.08)
     
+    RenewBtn = Button(root,text="Renew",bg='#d1ccc0', fg='black',command=renew)
+    RenewBtn.place(relx=0.38,rely=0.9, relwidth=0.18,relheight=0.08)
+
     quitBtn = Button(root,text="Quit",bg='#f7f1e3', fg='black', command=root.destroy)
-    quitBtn.place(relx=0.53,rely=0.9, relwidth=0.18,relheight=0.08)
+    quitBtn.place(relx=0.58,rely=0.9, relwidth=0.18,relheight=0.08)
     
     root.mainloop()

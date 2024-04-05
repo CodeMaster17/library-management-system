@@ -2,18 +2,20 @@ from tkinter import *
 from PIL import ImageTk,Image
 from tkinter import messagebox
 # import pymysql
+import config
 import mysql.connector
+import datetime
 # Add your own database name and password here to reflect in the code
-mypass= "root"
-mydatabase="bookdb"
+mypass= config.dbPass
+mydatabase=config.db
 
 con = mysql.connector.connect(host="localhost",user="root",password=mypass,database=mydatabase)
-cur = con.cursor()
+cur = con.cursor(buffered=True)
 
 # Enter Table Names here
 issueTable = "books_issued" 
 bookTable = "books"
-    
+today = datetime.datetime.today() + datetime.timedelta(days=10) #setting expiry to 10 days
 #List To store all Book IDs
 allBid = [] 
 
@@ -55,7 +57,7 @@ def issue():
     except:
         messagebox.showinfo("Error","Can't fetch Book IDs")
     
-    issueSql = "insert into "+issueTable+" values ('"+bid+"','"+issueto+"')"
+    issueSql = "insert into "+issueTable+" values ('"+bid+"','"+issueto+"','"+today.strftime("%d/%m/%y")+"')"
     show = "select * from "+issueTable
     
     updateStatus = "update "+bookTable+" set status = 'issued' where bid = '"+bid+"'"
