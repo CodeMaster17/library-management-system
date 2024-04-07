@@ -1,21 +1,23 @@
 from tkinter import *
 from PIL import ImageTk,Image
 # import pymysql
+import config
 import mysql.connector
 from tkinter import messagebox
 from AddBook import *
 from DeleteBook import *
 from ViewBooks import *
 from IssueBook import *
+from ViewIssuedBooks import *
 from ReturnBook import *
 
 # Add your own database name and password here to reflect in the code
 
-mypass= "root"
-mydatabase="bookdb"
+mypass= config.dbPass
+mydatabase=config.db
 
 con = mysql.connector.connect(host="localhost",user="root",password=mypass,database=mydatabase)
-cur = con.cursor()
+cur = con.cursor(buffered=True)
 
 root = Tk()
 root.title("Library")
@@ -36,7 +38,7 @@ if same:
 else:
     newImageSizeHeight = int(imageSizeHeight/n) 
     
-background_image = background_image.resize((newImageSizeWidth,newImageSizeHeight),Image.ANTIALIAS)
+background_image = background_image.resize((newImageSizeWidth,newImageSizeHeight),Image.LANCZOS)
 img = ImageTk.PhotoImage(background_image)
 
 Canvas1 = Canvas(root)
@@ -52,18 +54,21 @@ headingLabel = Label(headingFrame1, text="Welcome to \n DataFlair Library", bg='
 headingLabel.place(relx=0,rely=0, relwidth=1, relheight=1)
 
 btn1 = Button(root,text="Add Book Details",bg='black', fg='white', command=addBook)
-btn1.place(relx=0.28,rely=0.4, relwidth=0.45,relheight=0.1)
+btn1.place(relx=0.28,rely=0.3, relwidth=0.45,relheight=0.1)
     
 btn2 = Button(root,text="Delete Book",bg='black', fg='white', command=delete)
-btn2.place(relx=0.28,rely=0.5, relwidth=0.45,relheight=0.1)
+btn2.place(relx=0.28,rely=0.4, relwidth=0.45,relheight=0.1)
     
 btn3 = Button(root,text="View Book List",bg='black', fg='white', command=View)
-btn3.place(relx=0.28,rely=0.6, relwidth=0.45,relheight=0.1)
+btn3.place(relx=0.28,rely=0.5, relwidth=0.45,relheight=0.1)
     
 btn4 = Button(root,text="Issue Book to Student",bg='black', fg='white', command = issueBook)
-btn4.place(relx=0.28,rely=0.7, relwidth=0.45,relheight=0.1)
+btn4.place(relx=0.28,rely=0.6, relwidth=0.45,relheight=0.1)
     
-btn5 = Button(root,text="Return Book",bg='black', fg='white', command = returnBook)
+btn6 = Button(root,text="View Issued Books",bg='black', fg='white', command = viewIssuedBooks)
+btn6.place(relx=0.28,rely=0.7, relwidth=0.45,relheight=0.1)
+
+btn5 = Button(root,text="Return/Renew Book",bg='black', fg='white', command = returnBook)
 btn5.place(relx=0.28,rely=0.8, relwidth=0.45,relheight=0.1)
 
 root.mainloop()

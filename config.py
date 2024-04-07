@@ -1,0 +1,2 @@
+dbPass = "vinitagarwal"
+db = "bookdb"

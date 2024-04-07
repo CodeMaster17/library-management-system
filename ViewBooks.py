@@ -2,14 +2,15 @@ from tkinter import *
 from PIL import ImageTk,Image
 from tkinter import messagebox
 # import pymysql
+import config
 import mysql.connector
 
 # Add your own database name and password here to reflect in the code
-mypass= "root"
-mydatabase="bookdb"
+mypass= config.dbPass
+mydatabase=config.db
 
 con = mysql.connector.connect(host="localhost",user="root",password=mypass,database=mydatabase)
-cur = con.cursor()
+cur = con.cursor(buffered=True)
 
 # Enter Table Names here
 bookTable = "books" 
@@ -46,8 +47,9 @@ def View():
         for i in cur:
             Label(labelFrame, text="%-10s%-30s%-30s%-20s"%(i[0],i[1],i[2],i[3]),bg='black',fg='white').place(relx=0.07,rely=y)
             y += 0.1
-    except:
-        messagebox.showinfo("Failed to fetch files from database")
+    except Exception as e:
+        print(e)
+        messagebox.showinfo("Error","Fetch Failed")
     
     quitBtn = Button(root,text="Quit",bg='#f7f1e3', fg='black', command=root.destroy)
     quitBtn.place(relx=0.4,rely=0.9, relwidth=0.18,relheight=0.08)
